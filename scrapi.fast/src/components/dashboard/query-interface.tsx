@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CodeViewer } from "@/components/dashboard/code-viewer";
 import { cn } from "@/lib/utils";
 
 const PLACEHOLDER_QUERIES = [
@@ -293,7 +294,7 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 						{/* Left Panel: Logs + Preview */}
 						<div className="flex flex-col gap-px bg-border overflow-hidden">
 							{/* Logs Terminal */}
-							<div className="flex-1 flex flex-col bg-background overflow-hidden">
+							<div className="flex-1 flex flex-col bg-background overflow-hidden font-mono">
 								<div className="border-b px-3 py-1.5 flex items-center gap-2 bg-muted/30">
 									<Terminal className="size-3 text-muted-foreground" />
 									<span className="text-[10px] font-medium text-muted-foreground">
@@ -303,7 +304,7 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 										<div className="size-1.5 animate-pulse rounded-full bg-primary ml-auto" />
 									)}
 								</div>
-								<div className="flex-1 overflow-auto p-3 font-mono text-xs space-y-1">
+								<div className="flex-1 overflow-auto p-3 space-y-1" style={{ fontFamily: 'var(--font-mono)', fontSize: '13px' }}>
 									{logs.map((log, i) => (
 										<div key={i} className="flex items-start gap-2">
 											<span className="text-muted-foreground shrink-0 text-[10px]">
@@ -318,7 +319,7 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 							</div>
 
 							{/* Preview */}
-							<div className="flex-1 flex flex-col bg-background overflow-hidden">
+							<div className="flex-1 flex flex-col bg-background overflow-hidden font-mono">
 								<div className="border-b px-3 py-1.5 flex items-center gap-2 bg-muted/30">
 									<Eye className="size-3 text-muted-foreground" />
 									<span className="text-[10px] font-medium text-muted-foreground">
@@ -343,11 +344,13 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 										</Button>
 									)}
 								</div>
-								<div className="flex-1 overflow-auto p-3">
+								<div className="flex-1 overflow-auto">
 									{state === "success" && response ? (
-										<pre className="font-mono text-[11px] leading-relaxed">
-											<code>{JSON.stringify(response.data, null, 2)}</code>
-										</pre>
+										<CodeViewer
+											code={JSON.stringify(response.data, null, 2)}
+											lang="json"
+											className="h-full"
+										/>
 									) : (
 										<div className="flex items-center justify-center h-full text-muted-foreground text-xs">
 											Waiting for response...
@@ -358,7 +361,7 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 						</div>
 
 						{/* Right Panel: Generated Code */}
-						<div className="flex flex-col bg-background overflow-hidden">
+						<div className="flex flex-col bg-background overflow-hidden font-mono">
 							<div className="border-b px-3 py-1.5 flex items-center gap-2 bg-muted/30">
 								<FileCode className="size-3 text-muted-foreground" />
 								<span className="text-[10px] font-medium text-muted-foreground">
@@ -368,7 +371,8 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 									<div className="flex items-center gap-1 ml-auto">
 										<Badge
 											variant="outline"
-											className="h-4 px-1.5 text-[9px] font-mono"
+											className="h-4 px-1.5 text-[9px]"
+											style={{ fontFamily: 'var(--font-mono)' }}
 										>
 											GET {response.endpoint}
 										</Badge>
@@ -414,12 +418,12 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 											</TabsTrigger>
 										</TabsList>
 									</div>
-									<TabsContent value="typescript" className="flex-1 overflow-auto p-3 m-0">
-										<div className="relative">
+									<TabsContent value="typescript" className="flex-1 overflow-auto m-0">
+										<div className="relative h-full">
 											<Button
 												variant="ghost"
 												size="sm"
-												className="absolute top-0 right-0 h-6 px-2 text-[10px]"
+												className="absolute top-3 right-3 h-6 px-2 text-[10px] z-10"
 												onClick={() =>
 													copyToClipboard(response.generatedCode[0].code)
 												}
@@ -430,17 +434,19 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 													<Copy className="size-2.5" />
 												)}
 											</Button>
-											<pre className="font-mono text-[11px] leading-relaxed pr-12">
-												<code>{response.generatedCode[0].code}</code>
-											</pre>
+											<CodeViewer
+												code={response.generatedCode[0].code}
+												lang="typescript"
+												className="h-full"
+											/>
 										</div>
 									</TabsContent>
-									<TabsContent value="python" className="flex-1 overflow-auto p-3 m-0">
-										<div className="relative">
+									<TabsContent value="python" className="flex-1 overflow-auto m-0">
+										<div className="relative h-full">
 											<Button
 												variant="ghost"
 												size="sm"
-												className="absolute top-0 right-0 h-6 px-2 text-[10px]"
+												className="absolute top-3 right-3 h-6 px-2 text-[10px] z-10"
 												onClick={() =>
 													copyToClipboard(response.generatedCode[1].code)
 												}
@@ -451,17 +457,19 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 													<Copy className="size-2.5" />
 												)}
 											</Button>
-											<pre className="font-mono text-[11px] leading-relaxed pr-12">
-												<code>{response.generatedCode[1].code}</code>
-											</pre>
+											<CodeViewer
+												code={response.generatedCode[1].code}
+												lang="python"
+												className="h-full"
+											/>
 										</div>
 									</TabsContent>
-									<TabsContent value="curl" className="flex-1 overflow-auto p-3 m-0">
-										<div className="relative">
+									<TabsContent value="curl" className="flex-1 overflow-auto m-0">
+										<div className="relative h-full">
 											<Button
 												variant="ghost"
 												size="sm"
-												className="absolute top-0 right-0 h-6 px-2 text-[10px]"
+												className="absolute top-3 right-3 h-6 px-2 text-[10px] z-10"
 												onClick={() =>
 													copyToClipboard(
 														`curl -X GET "${window.location.origin}${response.endpoint}"`
@@ -474,11 +482,11 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 													<Copy className="size-2.5" />
 												)}
 											</Button>
-											<pre className="font-mono text-[11px] leading-relaxed pr-12">
-												<code>
-													{`curl -X GET "${window.location.origin}${response.endpoint}"`}
-												</code>
-											</pre>
+											<CodeViewer
+												code={`curl -X GET "${window.location.origin}${response.endpoint}"`}
+												lang="bash"
+												className="h-full"
+											/>
 										</div>
 									</TabsContent>
 								</Tabs>
@@ -498,7 +506,7 @@ def scrape_${query.toLowerCase().replace(/\s+/g, "_")}():
 					<div className="flex items-center gap-3">
 						<span className="hidden md:inline">scrapi.fast</span>
 						<ChevronRight className="size-2.5 hidden md:block" />
-						<span className="font-mono">
+						<span style={{ fontFamily: 'var(--font-mono)' }}>
 							{state === "idle" && "Ready"}
 							{state === "processing" && "Generating..."}
 							{state === "success" && "Complete"}

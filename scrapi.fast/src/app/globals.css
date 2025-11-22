@@ -77,10 +77,6 @@
     --sidebar-border: #dfdfdc;
     --sidebar-ring: #779631;
     --radius: 0.375rem;
-    --letter-spacing: 0em;
-    --font-sans: "Inter", Inter, ui-sans-serif, system-ui, sans-serif;
-    --font-serif: "Merriweather", Georgia, Cambria, "Times New Roman", serif;
-    --font-mono: "JetBrains Mono", JetBrains Mono, ui-monospace, SFMono-Regular, monospace;
     --radius-sm: 0.1875rem;
     --radius-md: 0.375rem;
     --radius-lg: 0.5rem;
@@ -129,10 +125,6 @@
     --sidebar-border: #242424;
     --sidebar-ring: #729500;
     --radius: 0.375rem;
-    --letter-spacing: 0em;
-    --font-sans: "Inter", Inter, ui-sans-serif, system-ui, sans-serif;
-    --font-serif: "Merriweather", Georgia, Cambria, "Times New Roman", serif;
-    --font-mono: "JetBrains Mono", JetBrains Mono, ui-monospace, SFMono-Regular, monospace;
     --radius-sm: 0.1875rem;
     --radius-md: 0.375rem;
     --radius-lg: 0.5rem;
@@ -214,8 +206,8 @@
 .shiki {
   background: var(--shiki-background) !important;
   color: var(--shiki-foreground) !important;
-  font-family: 'Fira Code', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 13px;
   line-height: 1.7;
   padding: 1.5rem;
   border-radius: 0.75rem;

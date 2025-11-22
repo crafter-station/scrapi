@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight, Code2, Shield, Zap } from "lucide-react";
 import {
 	SignInButton,
@@ -67,10 +68,10 @@ export default async function Home() {
 					</p>
 
 					<div className="flex flex-col gap-4 sm:flex-row">
-						<button className="group inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-8 text-base font-medium text-primary-foreground transition-colors hover:opacity-90">
+						<Link href="/dashboard" className="group inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-8 text-base font-medium text-primary-foreground transition-colors hover:opacity-90">
 							Get Started
 							<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-						</button>
+						</Link>
 						<button className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-input bg-background px-8 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground">
 							<Code2 className="h-4 w-4" />
 							View Docs
@@ -189,13 +190,16 @@ console.log(data);
 
 							<div className="mt-10 flex justify-center">
 								<Button
+									asChild
 									size="lg"
 									className="group relative h-14 gap-2.5 overflow-hidden rounded-xl bg-primary px-10 text-base font-semibold text-primary-foreground transition-all duration-300 hover:scale-[1.02] hover:opacity-90 hover:shadow-lg active:scale-[0.98]"
 								>
-									<span className="relative z-10 flex items-center gap-2.5">
-										Start Building
-										<ArrowRight className="h-4 w-4 transition-all duration-300 group-hover:translate-x-1" />
-									</span>
+									<Link href="/dashboard">
+										<span className="relative z-10 flex items-center gap-2.5">
+											Start Building
+											<ArrowRight className="h-4 w-4 transition-all duration-300 group-hover:translate-x-1" />
+										</span>
+									</Link>
 								</Button>
 							</div>
 						</div>

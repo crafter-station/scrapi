@@ -189,7 +189,7 @@ export function Sidebar() {
 												<ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground" />
 											)}
 											<Globe className="h-3 w-3 shrink-0 text-primary" />
-											<div className="flex-1 truncate">
+											<div className="flex-1 truncate font-mono">
 												<div className="font-medium">{service.name}</div>
 												<div className="text-[10px] text-muted-foreground">
 													{service.url}

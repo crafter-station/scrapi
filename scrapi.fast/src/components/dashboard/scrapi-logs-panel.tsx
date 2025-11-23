@@ -5,7 +5,8 @@ import {
 	StreamingMessage,
 	CodeBlock,
 	type CodeProjectPartProps,
-	type TaskSectionProps
+	type TaskSectionProps,
+	type ThinkingSectionProps
 } from "@v0-sdk/react";
 import { Loader } from "@/components/ai-elements/loader";
 import {
@@ -23,6 +24,11 @@ import {
 	TaskItem,
 	TaskItemFile,
 } from "@/components/ai-elements/task";
+import {
+	Reasoning,
+	ReasoningTrigger,
+	ReasoningContent,
+} from "@/components/ai-elements/reasoning";
 import { Badge } from "@/components/ui/badge";
 import type { MessageBinaryFormat } from "@/lib/v0-types";
 import { useState } from "react";
@@ -222,11 +228,44 @@ function TaskSectionWrapper({
 	);
 }
 
+// ThinkingSection wrapper component with proper styling
+function ThinkingSectionWrapper({
+	title,
+	duration,
+	thought,
+	collapsed,
+	onCollapse,
+	children,
+	brainIcon,
+	chevronRightIcon,
+	chevronDownIcon,
+	iconRenderer,
+	...props
+}: ThinkingSectionProps) {
+	return (
+		<Reasoning
+			duration={duration ? Math.round(duration) : duration}
+			defaultOpen={!collapsed}
+			onOpenChange={(open) => onCollapse?.()}
+			{...props}
+		>
+			<ReasoningTrigger title={title || "Thinking"} />
+			<ReasoningContent>
+				{thought ||
+					(typeof children === "string"
+						? children
+						: "No thinking content available")}
+			</ReasoningContent>
+		</Reasoning>
+	);
+}
+
 // Custom components to match our design system
 const sharedComponents = {
 	// v0-sdk specific components
 	CodeProjectPart: CodeProjectPartWrapper,
 	TaskSection: TaskSectionWrapper,
+	ThinkingSection: ThinkingSectionWrapper,
 	CodeBlock,
 
 	// Styled HTML elements

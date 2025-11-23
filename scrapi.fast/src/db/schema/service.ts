@@ -15,13 +15,14 @@ export const Service = pgTable(SERVICE_TABLE, {
   description: text("description"),
   url: text("url"),
 
-  script: text("script").notNull(),
-
-  agent_chat_id: text("agent_chat_id"),
-  browser_session: text("browser_session"),
+  user_prompt: text("user_prompt"),
   schema_input: text("schema_input"),
   schema_output: text("schema_output"),
   example_input: text("example_input"),
+
+  script: text("script"),
+  agent_chat_id: text("agent_chat_id"),
+  browser_session: text("browser_session"),
 
   created_at: timestamp("created_at", {
     withTimezone: true,

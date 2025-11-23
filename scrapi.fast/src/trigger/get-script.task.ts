@@ -4,6 +4,9 @@ import puppeteer from "puppeteer-core";
 import { v0 } from "v0-sdk";
 import { enhanceHTMLReadability } from "../lib/enhance-html";
 import { Browserbase } from "@browserbasehq/sdk";
+import { db } from "../db";
+import * as schema from "../db/schema";
+import { eq } from "drizzle-orm";
 
 const logSchema = z.object({
   url: z.string(),
@@ -19,8 +22,9 @@ export const scrapePageLogs = schemaTask({
   id: "scrape-page-logs",
   schema: z.object({
     url: z.url(),
+    serviceId: z.string().optional(),
   }),
-  run: async ({ url }) => {
+  run: async ({ url, serviceId }) => {
     const logs: z.infer<typeof logSchema>[] = [];
 
     let session;
@@ -139,8 +143,24 @@ export const scrapePageLogs = schemaTask({
     await page.close();
     await browser.close();
 
+    if (serviceId && session?.id) {
+      await db
+        .update(schema.Service)
+        .set({
+          browser_session: session.id,
+          updated_at: new Date().toISOString(),
+        })
+        .where(eq(schema.Service.id, serviceId));
+
+      logger.info("Saved browser session to database", {
+        serviceId,
+        sessionId: session.id,
+      });
+    }
+
     return {
       logs,
+      sessionId: session?.id,
     };
   },
 });
@@ -153,6 +173,7 @@ export const generateScraperScript = schemaTask({
     inputSchemaString: z.string(),
     outputSchemaString: z.string(),
     testArgsString: z.string(),
+    serviceId: z.string().optional(),
   }),
   run: async ({
     logs,
@@ -160,6 +181,7 @@ export const generateScraperScript = schemaTask({
     inputSchemaString,
     outputSchemaString,
     testArgsString,
+    serviceId,
   }) => {
     const V0_API_KEY = process.env.V0_API_KEY;
     if (!V0_API_KEY) {
@@ -247,6 +269,21 @@ export async function getData(input) {
       type: "files",
       files,
     });
+
+    if (serviceId) {
+      await db
+        .update(schema.Service)
+        .set({
+          agent_chat_id: chat.id,
+          updated_at: new Date().toISOString(),
+        })
+        .where(eq(schema.Service.id, serviceId));
+
+      logger.info("Saved agent chat ID to database", {
+        serviceId,
+        chatId: chat.id,
+      });
+    }
 
     const response = await v0.chats.sendMessage({
       chatId: chat.id,
@@ -507,6 +544,22 @@ Remember: trace exact paths from the logs, do not guess field names.`,
       logger.info("Files updated for retry");
     }
 
+    if (serviceId) {
+      await db
+        .update(schema.Service)
+        .set({
+          script: finalScript,
+          updated_at: new Date().toISOString(),
+        })
+        .where(eq(schema.Service.id, serviceId));
+
+      logger.info("Saved final script to database", {
+        serviceId,
+        testPassed,
+        scriptLength: finalScript.length,
+      });
+    }
+
     return {
       chatId: chat.id,
       script: finalScript,
@@ -519,15 +572,36 @@ Remember: trace exact paths from the logs, do not guess field names.`,
 export const getScriptTask = schemaTask({
   id: "get-script",
   schema: z.object({
-    url: z.url(),
-    userPrompt: z.string(),
-    inputSchemaString: z.string(),
-    outputSchemaString: z.string(),
-    testArgsString: z.string(),
+    serviceId: z.string(),
   }),
   run: async (payload) => {
+    const { serviceId } = payload;
+
+    logger.info("Fetching service from database", { serviceId });
+
+    const [service] = await db
+      .select()
+      .from(schema.Service)
+      .where(eq(schema.Service.id, serviceId))
+      .limit(1);
+
+    if (!service) {
+      throw new Error(`Service not found: ${serviceId}`);
+    }
+
+    if (!service.url) {
+      throw new Error(`Service URL is required: ${serviceId}`);
+    }
+
+    logger.info("Service loaded", {
+      serviceId,
+      name: service.name,
+      url: service.url,
+    });
+
     const scrapeResult = await scrapePageLogs.triggerAndWait({
-      url: payload.url,
+      url: service.url,
+      serviceId,
     });
 
     if (!scrapeResult.ok) {
@@ -541,10 +615,11 @@ export const getScriptTask = schemaTask({
 
     const generateResult = await generateScraperScript.triggerAndWait({
       logs: scrapeResult.output.logs,
-      userPrompt: payload.userPrompt,
-      inputSchemaString: payload.inputSchemaString,
-      outputSchemaString: payload.outputSchemaString,
-      testArgsString: payload.testArgsString,
+      userPrompt: service.user_prompt || "",
+      inputSchemaString: service.schema_input || "z.object({})",
+      outputSchemaString: service.schema_output || "z.array(z.object({}))",
+      testArgsString: service.example_input || "{}",
+      serviceId,
     });
 
     if (!generateResult.ok) {
@@ -560,6 +635,12 @@ export const getScriptTask = schemaTask({
       script: generateResult.output.script,
       testPassed: generateResult.output.testPassed,
       chatId: generateResult.output.chatId,
+      serviceId,
+      sessionId: scrapeResult.output.sessionId,
+      service: {
+        name: service.name,
+        url: service.url,
+      },
     };
   },
 });

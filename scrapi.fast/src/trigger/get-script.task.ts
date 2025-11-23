@@ -84,6 +84,8 @@ export const scrapePageLogs = schemaTask({
         reqUrl.includes("hubspot.com") ||
         reqUrl.includes("brevo.com") ||
         reqUrl.includes("kommo.com") ||
+        reqUrl.includes("appspot.com") ||
+        reqUrl.includes("ads.linkedin.com") ||
         reqUrl.includes("sentry.io") ||
         reqUrl.includes("doubleclick.net") ||
         reqUrl.includes("hubapi.com") ||

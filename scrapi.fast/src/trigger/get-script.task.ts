@@ -75,14 +75,16 @@ export const scrapePageLogs = schemaTask({
       const reqUrl = request.url();
       if (
         request.method() === "OPTIONS" ||
-        reqUrl.endsWith("site.webmanifest") ||
-        reqUrl.endsWith(".php") ||
-        reqUrl.includes(".infobip.com") ||
-        reqUrl.includes(".tiktokw.us") ||
+        reqUrl.includes("infobip.com") ||
+        reqUrl.includes("tiktokw.us") ||
         reqUrl.includes("google.com") ||
         reqUrl.includes("clarity.ms") ||
-        reqUrl.includes(".hs-sites.com") ||
+        reqUrl.includes("hs-sites.com") ||
         reqUrl.includes("wonderpush.com") ||
+        reqUrl.includes("hubspot.com") ||
+        reqUrl.includes("brevo.com") ||
+        reqUrl.includes("kommo.com") ||
+        reqUrl.includes("sentry.io") ||
         reqUrl.startsWith("https://analytics.google.com") ||
         reqUrl.startsWith("https://api.wonderpush.com") ||
         reqUrl.startsWith("https://o.clarity.ms") ||
@@ -91,11 +93,9 @@ export const scrapePageLogs = schemaTask({
         reqUrl.startsWith("https://cdn.cookielaw.org") ||
         reqUrl.startsWith("https://api.retargetly.com") ||
         reqUrl.startsWith("https://geolocation.onetrust.com") ||
-        reqUrl.includes(".hubspot.com") ||
         reqUrl.startsWith("https://api.infobip.com") ||
         reqUrl.startsWith("https://api2.infobip.net") ||
         reqUrl.startsWith("https://livechat.infobip.com") ||
-        reqUrl.includes("https://in-automate.brevo.com") ||
         reqUrl.startsWith("https://forms.hscollectedforms.net/") ||
         reqUrl.startsWith("https://www.googletagmanager.com/") ||
         reqUrl.startsWith("https://analytics.tiktok.com") ||
@@ -108,9 +108,10 @@ export const scrapePageLogs = schemaTask({
         reqUrl.includes("_next/static/") ||
         reqUrl.includes("_nuxt/") ||
         reqUrl.includes("_i18n/") ||
-        reqUrl.includes(".sentry.io") ||
         reqUrl.endsWith(".ico") ||
-        reqUrl.endsWith(".svg")
+        reqUrl.endsWith(".php") ||
+        reqUrl.endsWith(".svg") ||
+        reqUrl.endsWith("site.webmanifest")
       ) {
         return;
       }

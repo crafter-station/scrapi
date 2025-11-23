@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, Service } from "@/db";
 
+export const revalidate = 0;
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ service_id: string }> },

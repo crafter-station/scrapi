@@ -1,13 +1,15 @@
 "use client";
 
 import { Circle, Globe, Sparkles, Zap } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { BrowserbasePanel } from "./browserbase-panel";
 import { CodeTestPanel } from "./code-test-panel";
 import { V0ReasoningPanel } from "./v0-reasoning-panel";
+import { useV0Chat } from "@/hooks/use-v0-chat";
+import useSWR from "swr";
 
 const PLACEHOLDER_URLS = [
   "https://example.com/products",
@@ -101,6 +103,39 @@ export function QueryInterface() {
   const [mockMetadata, setMockMetadata] = useState<WorkflowMetadata>({
     stage: "idle",
   });
+
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+  const { data: service } = useSWR(
+    taskResult?.serviceId ? `/api/get-service?id=${taskResult.serviceId}` : null,
+    fetcher
+  );
+
+  const { chatHistory, handleStreamingComplete, handleChatData } = useV0Chat(
+    service?.agent_chat_id
+  );
+
+  useEffect(() => {
+    if (service?.agent_chat_id) {
+      setMockMetadata((prev) => ({
+        ...prev,
+        v0: {
+          chatId: service.agent_chat_id,
+          messages: chatHistory.map((msg) => ({
+            id: msg.id,
+            role: msg.role,
+            content:
+              typeof msg.content === "string"
+                ? msg.content
+                : JSON.stringify(msg.content),
+            reasoning: msg.reasoning,
+            tools: msg.tools,
+            tasks: msg.tasks,
+          })),
+        },
+      }));
+    }
+  }, [service?.agent_chat_id, chatHistory]);
 
   const metadata = mockMetadata;
   const stage = metadata?.stage || "idle";
@@ -218,6 +253,8 @@ export function QueryInterface() {
             chatId={metadata?.v0?.chatId}
             messages={metadata?.v0?.messages || []}
             stage={stage}
+            onStreamingComplete={handleStreamingComplete}
+            onChatData={handleChatData}
           />
 
           <CodeTestPanel

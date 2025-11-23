@@ -117,10 +117,12 @@ export function CodeTestPanel({
         </div>
         <div className="flex-1 overflow-auto p-3">
           <div className="flex items-center justify-center h-full">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <Loader2 className="h-4 w-4 animate-spin" />
               <div>
-                <p className="text-sm font-medium">Generating your API...</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Generating your API...
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   This usually takes 30-60 seconds
                 </p>
@@ -197,10 +199,12 @@ export function CodeTestPanel({
       <div className="flex-1 overflow-auto p-3 space-y-3">
         {!isReady ? (
           <div className="flex items-center justify-center h-full">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <Loader2 className="h-4 w-4 animate-spin" />
               <div>
-                <p className="text-sm font-medium">Generating your API...</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Generating your API...
+                </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   This usually takes 30-60 seconds
                 </p>

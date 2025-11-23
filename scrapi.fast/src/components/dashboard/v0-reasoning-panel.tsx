@@ -117,7 +117,7 @@ export function V0ReasoningPanel({
       <div className="flex-1 overflow-auto p-3 space-y-4">
         {!chatId ? (
           <div className="flex items-center justify-center h-full">
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-2">
               <Loader size={20} />
               <div className="text-center">
                 <p className="text-sm font-medium text-muted-foreground">
@@ -131,7 +131,7 @@ export function V0ReasoningPanel({
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-2">
               <Loader size={20} />
               <div className="text-center">
                 <p className="text-sm font-medium text-muted-foreground">

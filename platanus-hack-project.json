@@ -1,4 +1,5 @@
 {
 	"project-name": "scrapi.fast",
-	"project-description-spanish": "Convierte páginas web en APIs deterministas"
+	"project-description-spanish": "Convierte páginas web en APIs deterministas",
+	"deploy-url": "https://scrapi.fast"
 }

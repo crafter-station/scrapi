@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# scrapi.fast
 
-## Getting Started
+**scrapi.fast** utiliza técnicas de agente autónomo de última generación para realizar ingeniería inversa impulsada por IA para tareas de web scraping. Convierte cualquier sitio web en una API determinista, permitiendo a los desarrolladores solicitar datos limpios y estructurados usando simples instrucciones en lenguaje natural.
 
-First, run the development server:
+Construido con Next.js 16 y un backend TypeScript potenciado por Bun, aprovecha BrowserBase (Puppeteer) para automatización rápida y ofrece una UI pulida y lista para autenticación para generación de código autónoma confiable y extracción de datos.
+
+## Características
+
+- 🤖 **Agente IA Autónomo**: Analiza automáticamente sitios web y genera código de scraping
+- ⚡ **Súper Rápido**: Automatización potenciada por BrowserBase para ejecución en milisegundos
+- 🎯 **Lenguaje Natural**: Describe lo que quieres en inglés simple
+- 🛡️ **Determinista**: Resultados consistentes y confiables incluso cuando los sitios web se actualizan
+- 🔐 **Listo para Autenticación**: Integración integrada con Clerk para acceso seguro
+
+## Comenzando
+
+### Prerrequisitos
+
+- Runtime [Bun](https://bun.sh)
+- Node.js 20+ (para compatibilidad)
+- Variables de entorno configuradas (ver `.env.example`)
+
+### Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+# Instalar dependencias
+bun install
+
+# Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus API keys
+
+# Ejecutar migraciones de base de datos
+bun run db:push
+
+# Poblar base de datos (opcional)
+bun run db:seed
+```
+
+### Desarrollo
+
+```bash
+# Iniciar servidor de desarrollo
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) para ver la aplicación.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Variables de Entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Variables de entorno requeridas:
 
-## Learn More
+- `BROWSERBASE_API_KEY` - API key de BrowserBase para automatización de navegador
+- `BROWSERBASE_PROJECT_ID` - ID de proyecto de BrowserBase
+- `V0_API_KEY` - API key del SDK v0 para generación de código con IA
+- `DATABASE_URL` - String de conexión PostgreSQL (Neon)
+- `CLERK_SECRET_KEY` - Secreto de autenticación de Clerk
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clave pública de Clerk
 
-To learn more about Next.js, take a look at the following resources:
+## Arquitectura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Componentes Principales
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Interfaz de Consulta** (`/dashboard`): UI principal para crear servicios de scraping
+- **Rutas API**: Endpoints RESTful para gestión y ejecución de servicios
+- **Tareas Trigger.dev**: Trabajos en segundo plano para scraping y generación de código
+- **Integración SDK v0**: Generación de código y razonamiento impulsados por IA
 
-## Deploy on Vercel
+### Flujo de Trabajo
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. El usuario proporciona URL + consulta en lenguaje natural
+2. BrowserBase captura tráfico de red y estructura de página
+3. La IA analiza datos y genera script de scraping
+4. El script se prueba y refina automáticamente
+5. El script validado se convierte en un endpoint de API determinista
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack Tecnológico
+
+- **Framework**: Next.js 16 (App Router)
+- **Runtime**: Bun
+- **Lenguaje**: TypeScript
+- **Base de Datos**: Drizzle ORM + Neon (PostgreSQL)
+- **Autenticación**: Clerk
+- **Automatización de Navegador**: BrowserBase + Puppeteer
+- **IA/ML**: SDK v0
+- **Trabajos en Segundo Plano**: Trigger.dev
+- **UI**: Radix UI + Tailwind CSS + shadcn/ui
+
+## Estructura del Proyecto
+
+```
+src/
+├── app/              # Páginas y rutas API del app router de Next.js
+├── components/       # Componentes React
+├── db/              # Esquema y migraciones de base de datos
+├── hooks/           # Hooks de React
+├── lib/             # Funciones de utilidad y clientes
+└── trigger/         # Tareas en segundo plano de Trigger.dev
+```
+
+## Scripts
+
+- `bun dev` - Iniciar servidor de desarrollo
+- `bun build` - Construir para producción
+- `bun start` - Iniciar servidor de producción
+- `bun lint` - Ejecutar linter Biome
+- `bun format` - Formatear código con Biome
+- `bun db:seed` - Poblar base de datos con datos de ejemplo
+
+## Aprende Más
+
+- [Documentación de Next.js](https://nextjs.org/docs)
+- [Documentación de Trigger.dev](https://trigger.dev/docs)
+- [Documentación de BrowserBase](https://docs.browserbase.com)
+- [Documentación del SDK v0](https://v0.dev/docs)
+
+## Licencia
+
+Proyecto privado - Todos los derechos reservados

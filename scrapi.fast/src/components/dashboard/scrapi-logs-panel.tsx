@@ -1,6 +1,12 @@
 "use client";
 
-import { Message as V0Message, StreamingMessage, CodeBlock, type CodeProjectPartProps } from "@v0-sdk/react";
+import {
+	Message as V0Message,
+	StreamingMessage,
+	CodeBlock,
+	type CodeProjectPartProps,
+	type TaskSectionProps
+} from "@v0-sdk/react";
 import { Loader } from "@/components/ai-elements/loader";
 import {
 	Message,
@@ -10,6 +16,13 @@ import {
 	Conversation,
 	ConversationContent,
 } from "@/components/ai-elements/conversation";
+import {
+	Task,
+	TaskTrigger,
+	TaskContent,
+	TaskItem,
+	TaskItemFile,
+} from "@/components/ai-elements/task";
 import { Badge } from "@/components/ui/badge";
 import type { MessageBinaryFormat } from "@/lib/v0-types";
 import { useState } from "react";
@@ -40,6 +53,7 @@ function CodeProjectPartWrapper({
 	collapsed,
 	className,
 	children,
+	iconRenderer,
 	...props
 }: CodeProjectPartProps) {
 	const [isCollapsed, setIsCollapsed] = useState(collapsed ?? false);
@@ -47,7 +61,6 @@ function CodeProjectPartWrapper({
 	return (
 		<div
 			className={`my-4 border border-border rounded-lg overflow-hidden ${className || ""}`}
-			{...props}
 		>
 			<button
 				onClick={() => setIsCollapsed(!isCollapsed)}
@@ -115,10 +128,105 @@ function CodeProjectPartWrapper({
 	);
 }
 
+// TaskSection wrapper component with proper styling
+function TaskSectionWrapper({
+	title,
+	type,
+	parts,
+	collapsed,
+	onCollapse,
+	children,
+	taskIcon,
+	chevronRightIcon,
+	chevronDownIcon,
+	iconRenderer,
+	...props
+}: TaskSectionProps) {
+	return (
+		<Task
+			className="w-full mb-4"
+			defaultOpen={!collapsed}
+			onOpenChange={(open) => onCollapse?.()}
+		>
+			<TaskTrigger title={title || type || "Task"} />
+			<TaskContent>
+				{parts &&
+					parts.length > 0 &&
+					parts.map((part, index) => {
+						if (typeof part === "string") {
+							return <TaskItem key={index}>{part}</TaskItem>;
+						}
+
+						// Handle structured task data
+						if (part && typeof part === "object") {
+							const partObj = part as any;
+
+							// Handle reading-file task
+							if (partObj.type === "reading-file" && partObj.filePath) {
+								return (
+									<TaskItem key={index}>
+										Reading file <TaskItemFile>{partObj.filePath}</TaskItemFile>
+									</TaskItem>
+								);
+							}
+
+							// Handle select-files task
+							if (
+								partObj.type === "select-files" &&
+								Array.isArray(partObj.filePaths)
+							) {
+								return (
+									<TaskItem key={index}>
+										Read{" "}
+										{partObj.filePaths.map((file: string, i: number) => (
+											<TaskItemFile key={i}>
+												{file.split("/").pop()}
+											</TaskItemFile>
+										))}
+									</TaskItem>
+								);
+							}
+
+							// Fallback for unknown task parts
+							const message =
+								partObj.message || partObj.description || partObj.text;
+
+							if (message) {
+								return (
+									<TaskItem key={index}>
+										<div className="text-sm">{message}</div>
+									</TaskItem>
+								);
+							}
+
+							return (
+								<TaskItem key={index}>
+									<details className="text-xs">
+										<summary className="text-muted-foreground cursor-pointer">
+											Unknown task part (click to expand)
+										</summary>
+										<div className="font-mono mt-2 bg-muted p-2 rounded">
+											{JSON.stringify(part, null, 2)}
+										</div>
+									</details>
+								</TaskItem>
+							);
+						}
+
+						return null;
+					})}
+
+				{children && <TaskItem>{children}</TaskItem>}
+			</TaskContent>
+		</Task>
+	);
+}
+
 // Custom components to match our design system
 const sharedComponents = {
 	// v0-sdk specific components
 	CodeProjectPart: CodeProjectPartWrapper,
+	TaskSection: TaskSectionWrapper,
 	CodeBlock,
 
 	// Styled HTML elements

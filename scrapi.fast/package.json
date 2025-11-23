@@ -47,6 +47,7 @@
     "@tanstack/react-query": "^5.90.10",
     "@trigger.dev/sdk": "4.1.1",
     "@v0-sdk/react": "^0.4.0",
+    "@vercel/analytics": "^1.5.0",
     "@xyflow/react": "^12.9.3",
     "ai": "^5.0.100",
     "class-variance-authority": "^0.7.1",

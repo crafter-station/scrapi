@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "scrapi.fast",
@@ -41,6 +40,7 @@
         "@tanstack/react-query": "^5.90.10",
         "@trigger.dev/sdk": "4.1.1",
         "@v0-sdk/react": "^0.4.0",
+        "@vercel/analytics": "^1.5.0",
         "@xyflow/react": "^12.9.3",
         "ai": "^5.0.100",
         "class-variance-authority": "^0.7.1",
@@ -680,6 +680,8 @@
     "@ungap/structured-clone": ["@ungap/structured-clone@1.3.0", "", {}, "sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g=="],
 
     "@v0-sdk/react": ["@v0-sdk/react@0.4.0", "", { "dependencies": { "jsondiffpatch": "^0.7.3" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0" } }, "sha512-0TRKTE6zjcGg2+Gi3gliMtYp9LeCxuyJgDPnr90BnMX41HrH0+KqRTZzxn6xq0QMmCMUYRCZ+YGgi46jf139xA=="],
+
+    "@vercel/analytics": ["@vercel/analytics@1.5.0", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g=="],
 
     "@vercel/oidc": ["@vercel/oidc@3.0.5", "", {}, "sha512-fnYhv671l+eTTp48gB4zEsTW/YtRgRPnkI2nT7x6qw5rkI1Lq2hTmQIpHPgyThI0znLK+vX2n9XxKdXZ7BUbbw=="],
 

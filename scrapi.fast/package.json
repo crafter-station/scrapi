@@ -64,6 +64,8 @@
     "nanoid": "^5.1.6",
     "next": "16.0.3",
     "next-themes": "^0.4.6",
+    "posthog-js": "^1.297.2",
+    "posthog-node": "^5.13.2",
     "puppeteer": "^24.31.0",
     "puppeteer-core": "^24.31.0",
     "react": "19.2.0",

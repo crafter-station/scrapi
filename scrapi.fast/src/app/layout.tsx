@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
+import { PostHogProvider } from "@/providers/posthog";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
@@ -53,15 +54,17 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-          <Analytics />
+          <PostHogProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+            <Analytics />
+          </PostHogProvider>
         </body>
       </html>
     </ClerkProvider>

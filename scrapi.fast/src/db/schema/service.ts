@@ -16,6 +16,12 @@ export const Service = pgTable(SERVICE_TABLE, {
 
   script: text("script").notNull(),
 
+  agent_chat_id: text("agent_chat_id"),
+  browser_session: text("browser_session"),
+  schema_input: text("schema_input"),
+  schema_output: text("schema_output"),
+  example_input: text("example_input"),
+
   created_at: timestamp("created_at", {
     withTimezone: true,
     mode: "string",

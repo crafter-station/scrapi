@@ -229,7 +229,7 @@ export function ScrapiLogsPanel({
 
 						{messages.map((msg, index) => (
 							<div key={msg.id || `msg-${index}`} className="space-y-3">
-								{/* User messages */}
+								{/* User messages - using Streamdown for markdown rendering */}
 								{msg.role === "user" && (
 									<AIMessage from="user">
 										<MessageContent>
@@ -315,7 +315,7 @@ export function ScrapiLogsPanel({
 														</Tool>
 													))}
 
-												{/* Message content */}
+												{/* Message content - using Streamdown for markdown rendering */}
 												{typeof msg.content === "string" ? (
 													(() => {
 														const parsed = parseV0Content(msg.content);

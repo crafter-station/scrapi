@@ -48,41 +48,13 @@ export function CodeTestPanel({
   const [copied, setCopied] = useState(false);
   const [hasAutoRun, setHasAutoRun] = useState(false);
 
-  // Use serviceId if provided, otherwise show the old interface
-  if (!serviceId) {
-    return (
-      <div className="flex flex-col overflow-hidden bg-background">
-        <div className="border-b p-3 bg-muted/30">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">
-              GENERATED CODE & TESTS
-            </span>
-            {currentAttempt && maxAttempts && (
-              <Badge variant="outline" className="h-4 px-1.5 text-[9px]">
-                Attempt {currentAttempt}/{maxAttempts}
-              </Badge>
-            )}
-          </div>
-        </div>
-        <div className="flex-1 overflow-auto p-3">
-          <div className="flex items-center justify-center h-full">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-sm font-mono">
-                Waiting for code generation...
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const curlCommand = `curl -X POST https://www.scrapi.fast/api/service/${serviceId} \\
+  const curlCommand = serviceId ? `curl -X POST https://www.scrapi.fast/api/service/${serviceId} \\
   -H "Content-Type: application/json" \\
-  -d '{}' | jq .`;
+  -d '{}' | jq .` : '';
 
   const handleRun = async () => {
+    if (!serviceId) return;
+
     setIsRunning(true);
     setResult(null);
 
@@ -116,15 +88,49 @@ export function CodeTestPanel({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const isReady = service && !isServiceLoading;
+  const hasScript = service && service.script;
+  const isReady = service && !isServiceLoading && service.url && hasScript;
 
-  // Auto-run when service becomes ready
+  // Auto-run when service becomes ready and has URL and script
   useEffect(() => {
     if (isReady && !hasAutoRun && !isRunning) {
       setHasAutoRun(true);
       handleRun();
     }
   }, [isReady, hasAutoRun, isRunning]);
+
+  // Show loading state when no serviceId or service is being generated
+  if (!serviceId || !hasScript) {
+    return (
+      <div className="flex flex-col overflow-hidden bg-background">
+        <div className="border-b p-3 bg-muted/30">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground">
+              API ENDPOINT
+            </span>
+            {currentAttempt && maxAttempts && (
+              <Badge variant="outline" className="h-4 px-1.5 text-[9px]">
+                Attempt {currentAttempt}/{maxAttempts}
+              </Badge>
+            )}
+          </div>
+        </div>
+        <div className="flex-1 overflow-auto p-3">
+          <div className="flex items-center justify-center h-full">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <div>
+                <p className="text-sm font-medium">Generating your API...</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  This usually takes 30-60 seconds
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col overflow-hidden bg-background">

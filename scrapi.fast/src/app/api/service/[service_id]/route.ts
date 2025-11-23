@@ -4,6 +4,16 @@ import { db, Service } from "@/db";
 
 export const revalidate = 0;
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return new Response(null, { headers: corsHeaders });
+}
+
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ service_id: string }> },
@@ -15,11 +25,17 @@ export async function POST(
   });
 
   if (!service) {
-    return Response.json({ error: "Service not found" }, { status: 404 });
+    return Response.json(
+      { error: "Service not found" },
+      { status: 404, headers: corsHeaders },
+    );
   }
 
   if (!service.script) {
-    return Response.json({ error: "Service has no script" }, { status: 400 });
+    return Response.json(
+      { error: "Service has no script" },
+      { status: 400, headers: corsHeaders },
+    );
   }
 
   const input = await request.json();
@@ -38,7 +54,7 @@ export async function POST(
             error: "Input validation failed",
             details: validation.error.message,
           },
-          { status: 400 },
+          { status: 400, headers: corsHeaders },
         );
       }
     }
@@ -69,18 +85,18 @@ export async function POST(
             details: validation.error.message,
             result,
           },
-          { status: 500 },
+          { status: 500, headers: corsHeaders },
         );
       }
     }
 
-    return Response.json({ data: result });
+    return Response.json({ data: result }, { headers: corsHeaders });
   } catch (error) {
     return Response.json(
       {
         error: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 },
+      { status: 500, headers: corsHeaders },
     );
   }
 }

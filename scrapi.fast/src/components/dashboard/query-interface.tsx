@@ -117,11 +117,15 @@ export function QueryInterface({ serviceId: initialServiceId, taskId: initialTas
     fetcher,
     {
       refreshInterval: (data) => {
-        // Keep polling if script is not yet generated
-        if (!data?.script && (stage === "generating" || stage === "extracting" || stage === "scraping")) {
-          return 2000; // Poll every 2 seconds
+        // Keep polling if we're still in progress stages
+        if (stage === "generating" || stage === "extracting" || stage === "scraping") {
+          // Stop polling only when both agent_chat_id AND script are available
+          if (data?.agent_chat_id && data?.script) {
+            return 0; // Stop polling
+          }
+          return 1000; // Poll every 1 second for faster updates
         }
-        return 0; // Stop polling once script is available
+        return 0; // Stop polling in other stages
       },
     }
   );

@@ -46,7 +46,7 @@ export function useV0Chat(chatId: string | null | undefined) {
     chatId ? `/api/chats/${chatId}` : null,
     fetcher,
     {
-      refreshInterval: chatId ? 2000 : 0, // Poll every 2 seconds when chat ID exists
+      refreshInterval: chatId ? 1000 : 0, // Poll every 1 second for faster updates
       onSuccess: (chat) => {
         if (chat?.messages) {
           const messages: ChatMessage[] = chat.messages.map((msg: any) => ({

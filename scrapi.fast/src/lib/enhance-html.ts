@@ -1,30 +1,10 @@
 export function enhanceHTMLReadability(
-  body: string | object | undefined,
+  htmlString: string | object | undefined,
 ): string | object {
-  if (!body) {
-    return body ?? "";
-  }
-
-  if (typeof body === "object") {
-    return body;
-  }
-
-  if (typeof body !== "string") {
-    return String(body);
-  }
-
-  return body;
-}
-
-  htmlString: string,
-  options?: { maxLineLength?: number },
-) {
   if (typeof htmlString !== "string") return htmlString;
 
-  const maxLineLength = options?.maxLineLength ?? 120;
+  const maxLineLength = 120;
   let html = htmlString;
-
-  // 1. Expandir HTML minificado (agregar saltos de línea después de tags)
   html = html.replace(/></g, ">\n<");
 
   // 2. Formatear scripts minificados para mejor legibilidad
@@ -212,7 +192,9 @@ function splitLongLines(text: string, maxLength: number): string {
       }
 
       return chunks
-        .map((chunk, idx) => (idx === 0 ? indent + chunk : indent + "  " + chunk))
+        .map((chunk, idx) =>
+          idx === 0 ? indent + chunk : indent + "  " + chunk,
+        )
         .join("\n");
     })
     .join("\n");

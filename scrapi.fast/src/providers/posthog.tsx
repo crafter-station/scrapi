@@ -15,6 +15,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       posthog.init(apiKey, {
         api_host: apiHost,
         ui_host: "https://us.posthog.com",
+        
         person_profiles: "identified_only",
         capture_pageview: true,
         capture_pageleave: true,

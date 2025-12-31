@@ -49,12 +49,17 @@ export default async function Home() {
 					edgeFade={0.2}
 				/>
 				<div className="flex flex-col items-center justify-center gap-8 py-24 px-6 md:px-8 lg:px-16 xl:px-24 text-center md:py-32 relative z-10 bg-background/0">
-					<div className="inline-flex items-center rounded-full border bg-background px-4 py-2 text-sm shadow-sm">
+					<Link
+						href="https://platanus-votes.vercel.app/"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="inline-flex items-center rounded-full border bg-background px-4 py-2 text-sm shadow-sm hover:bg-accent transition-colors"
+					>
 						<Zap className="mr-2 h-4 w-4 text-primary" />
 						<span className="font-medium">
-							Developer tools for the modern web
+							Vote for us at Platanus Hack 2025!
 						</span>
-					</div>
+					</Link>
 
 					<h1 className="max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
 						Turn websites into{" "}

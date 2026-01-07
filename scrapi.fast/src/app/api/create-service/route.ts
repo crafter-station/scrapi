@@ -7,12 +7,16 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 import { db, Project, Service } from "@/db";
 import type { getScriptTask } from "@/trigger/get-script.task";
+import { aiRatelimit, checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const { userId } = await auth();
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const rateLimitResponse = await checkRateLimit(aiRatelimit, userId);
+  if (rateLimitResponse) return rateLimitResponse;
 
   const { prompt: userPrompt } = await request.json();
 

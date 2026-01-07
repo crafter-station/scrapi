@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db, Service } from "@/db";
+import { apiRatelimit, checkRateLimit } from "@/lib/rate-limit";
 
 export const revalidate = 0;
 
@@ -18,6 +19,15 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ service_id: string }> },
 ) {
+  const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
+  const rateLimitResponse = await checkRateLimit(apiRatelimit, `ip:${ip}`);
+  if (rateLimitResponse) {
+    return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+      status: 429,
+      headers: corsHeaders,
+    });
+  }
+
   const { service_id } = await params;
 
   const service = await db.query.Service.findFirst({

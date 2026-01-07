@@ -18,6 +18,29 @@ const logSchema = z.object({
   timestamp: z.number(),
 });
 
+const SENSITIVE_HEADERS = [
+  "authorization",
+  "cookie",
+  "set-cookie",
+  "x-csrf-token",
+  "x-api-key",
+  "x-auth-token",
+  "proxy-authorization",
+  "www-authenticate",
+  "x-access-token",
+  "x-refresh-token",
+];
+
+function filterSensitiveHeaders(
+  headers: Record<string, string>,
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(headers).filter(
+      ([key]) => !SENSITIVE_HEADERS.includes(key.toLowerCase()),
+    ),
+  );
+}
+
 export const scrapePageLogs = schemaTask({
   id: "scrape-page-logs",
   schema: z.object({
@@ -142,7 +165,7 @@ export const scrapePageLogs = schemaTask({
           method: request.method(),
           resourceType,
           status: response.status(),
-          headers: response.headers(),
+          headers: filterSensitiveHeaders(response.headers()),
           body: enhanceHTMLReadability(body as string),
           timestamp: Date.now(),
         });
@@ -487,10 +510,12 @@ ONLY modify scripts/get-data.js. Do NOT create, modify, or touch any other files
       : "http://localhost:3000/api/run-test";
 
     logger.info("API URL", { apiUrl });
-    logger.info("Input schema string", { inputSchemaString });
-    logger.info("Output schema string", { outputSchemaString });
-    logger.info("Test args string", { testArgsString });
-    logger.info("Script preview", { script: finalScript.substring(0, 500) });
+    logger.info("Schema info", {
+      inputSchemaLength: inputSchemaString.length,
+      outputSchemaLength: outputSchemaString.length,
+      testArgsLength: testArgsString.length,
+    });
+    logger.info("Script info", { scriptLength: finalScript.length });
 
     const MAX_RETRIES = 10;
 
@@ -512,7 +537,11 @@ ONLY modify scripts/get-data.js. Do NOT create, modify, or touch any other files
 
       const { testResult, passed, returnedEmpty } = await response.json();
 
-      logger.info(`Attempt ${attempt + 1}/${MAX_RETRIES}`, { testResult });
+      logger.info(`Attempt ${attempt + 1}/${MAX_RETRIES}`, {
+        passed,
+        returnedEmpty,
+        resultLength: testResult?.length ?? 0,
+      });
 
       if (passed && !returnedEmpty) {
         testPassed = true;

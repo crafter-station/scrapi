@@ -1,6 +1,11 @@
 import { z } from "zod";
+import { apiRatelimit, checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  const ip = request.headers.get("x-forwarded-for") ?? "anonymous";
+  const rateLimitResponse = await checkRateLimit(apiRatelimit, `ip:${ip}`);
+  if (rateLimitResponse) return rateLimitResponse;
+
   const body = await request.json();
   const { inputSchemaString, outputSchemaString, testArgsString, script } =
     body;
